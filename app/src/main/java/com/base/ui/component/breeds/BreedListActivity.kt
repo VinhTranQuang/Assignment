@@ -1,8 +1,13 @@
 package com.base.ui.component.breeds
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
+import android.view.Menu
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -56,40 +61,38 @@ class BreedListActivity : BaseActivity(), RecyclerItemListener {
 
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.main_actions, menu)
-//        val searchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
-//        searchView.queryHint = getString(R.string.search_by_name)
-//        searchView.visibility = INVISIBLE
-//        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//        searchView.apply {
-//            setSearchableInfo(searchManager.getSearchableInfo(componentName))
-//        }
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
-//            androidx.appcompat.widget.SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                if (newText?.length == 4) {
-//                    searchJob?.cancel()
-//                    searchJob = lifecycleScope.launch {
-//                        breedAdapter.submitData(lifecycle, PagingData.empty())
-//                        recipesListViewModel.searchBreeds(newText)
-//                    }
-//                } else if (newText.isNullOrEmpty()) {
-//                    breedAdapter.submitData(lifecycle, PagingData.empty())
-//                    lifecycleScope.launch {
-//                        recipesListViewModel.getBreeds()
-//                    }
-//                }
-//                return true
-//            }
-//        }
-//        )
-//        return true
-//    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_actions, menu)
+        val searchView = menu?.findItem(R.id.action_search)?.actionView as SearchView
+        searchView.queryHint = getString(R.string.search_by_name)
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchView.apply {
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener, androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText?.length == 4) {
+                    searchJob?.cancel()
+                    searchJob = lifecycleScope.launch {
+                        breedAdapter.submitData(lifecycle, PagingData.empty())
+                        recipesListViewModel.searchBreeds(newText)
+                    }
+                } else if (newText.isNullOrEmpty()) {
+                    breedAdapter.submitData(lifecycle, PagingData.empty())
+                    lifecycleScope.launch {
+                        recipesListViewModel.getBreeds()
+                    }
+                }
+                return true
+            }
+        }
+        )
+        return true
+    }
 
     private fun bindListData(recipes: PagingData<BreedItem>) {
         if (recipes != null) {

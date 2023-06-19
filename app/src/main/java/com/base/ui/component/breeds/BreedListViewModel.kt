@@ -55,24 +55,27 @@ constructor(
     suspend fun searchBreeds(id: String) {
         viewModelScope.launch {
             if (networkConnectivity.isConnected()) {
-                repository.requestSearchBreeds(id, page, limit, apiKey)
-                    .debounce(200)
-                    .catch {
-                    }
-                    .collect { breedItem ->
-                        var itemBreed: BreedItem = breedItem
-                        val referenceId = itemBreed.referenceId
-                        repository.requestGetImage(referenceId, page, limit, apiKey)
-                            .catch {
-                            }
-                            .collect {
-                                val imageItem: Image = it
-                                itemBreed.image.url = imageItem.url
-                                val result: PagingData<BreedItem> = PagingData.empty()
-//                                result.
-                                breedsSearchLiveData.value = result
-                            }
-                    }
+                viewModelScope.launch (Dispatchers.Main){
+                  Toast.makeText(context, "Search online is not finish yet", Toast.LENGTH_LONG).show()
+                }
+//                repository.requestSearchBreeds(id, page, limit, apiKey)
+//                    .debounce(200)
+//                    .catch {
+//                    }
+//                    .collect { breedItem ->
+//                        var itemBreed: BreedItem = breedItem
+//                        val referenceId = itemBreed.referenceId
+//                        repository.requestGetImage(referenceId, page, limit, apiKey)
+//                            .catch {
+//                            }
+//                            .collect {
+//                                val imageItem: Image = it
+//                                itemBreed.image.url = imageItem.url
+//                                val result: PagingData<BreedItem> = PagingData.empty()
+////                                result.
+//                                breedsSearchLiveData.value = result
+//                            }
+//                    }
             } else {
                 Pager(
                     config = PagingConfig(
