@@ -3,6 +3,7 @@ package com.base.data.remote
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.base.APP_APIKEY
 import com.base.data.dto.breed.BreedItem
 import com.base.data.remote.service.BreedsService
 import retrofit2.HttpException
@@ -10,7 +11,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class RemoteSearchDataSourceImpl@Inject constructor(val itemBreed: BreedItem, val referenceId: String, page:Int, limit:Int, apiKey:String, val apiService: BreedsService) : PagingSource<Int, BreedItem>() {
-    private val apiKey = "live_1UQvDFMdqIy9HimfEoT4IqcMXg66tqbmjEJKiYecmPuZEyiubjlh0PjI1vIGubR2"
+    private val apiKey = APP_APIKEY
     private var limit = 10
     private val startIndexAt =0
 

@@ -8,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.base.APP_APIKEY
 import com.base.R
 import com.base.data.dto.breed.BreedItem
 import com.base.data.dto.breed.Image
@@ -42,7 +43,7 @@ constructor(
         MutableLiveData<PagingData<BreedItem>>()
     val breedsSearchLiveData: MutableLiveData<PagingData<BreedItem>> =
         MutableLiveData<PagingData<BreedItem>>()
-    private val apiKey = "live_1UQvDFMdqIy9HimfEoT4IqcMXg66tqbmjEJKiYecmPuZEyiubjlh0PjI1vIGubR2"
+    private val apiKey = APP_APIKEY
     private var page = 0
     private var limit = 15
 

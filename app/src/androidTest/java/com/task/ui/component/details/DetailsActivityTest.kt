@@ -10,7 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import com.base.ui.component.details.DetailsActivity
 import com.task.R
-import com.base.RECIPE_ITEM_KEY
+import com.base.BREED_ITEM_KEY
 import com.task.TestUtil.initData
 import com.task.TestUtil.recipes
 import com.base.utils.EspressoIdlingResource
@@ -37,7 +37,7 @@ class DetailsActivityTest {
     fun setup() {
         initData()
         val intent: Intent = Intent().apply {
-            putExtra(RECIPE_ITEM_KEY, recipes.recipesList[0])
+            putExtra(BREED_ITEM_KEY, recipes.recipesList[0])
         }
         mActivityTestRule.launchActivity(intent)
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
