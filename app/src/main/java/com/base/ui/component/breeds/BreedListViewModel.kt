@@ -13,6 +13,9 @@ import com.base.data.dto.breed.BreedItem
 import com.base.data.dto.breed.Image
 import com.base.data.local.LocalDataSource
 import com.base.data.remote.BreedRepository
+import com.base.data.remote.RemoteDataSourceImpl
+import com.base.data.remote.RemoteSearchDataSourceImpl
+import com.base.data.remote.service.BreedsService
 import com.base.ui.base.BaseViewModel
 import com.base.utils.ImageUtils
 import com.base.utils.NetworkConnectivity
@@ -32,6 +35,7 @@ constructor(
     @ApplicationContext private val context: Context,
     private val networkConnectivity: NetworkConnectivity,
     private val localDataSource: LocalDataSource,
+    private val apiService: BreedsService
 ) : BaseViewModel() {
 
     val breedsLiveData: MutableLiveData<PagingData<BreedItem>> =
@@ -55,27 +59,32 @@ constructor(
     suspend fun searchBreeds(id: String) {
         viewModelScope.launch {
             if (networkConnectivity.isConnected()) {
-                viewModelScope.launch (Dispatchers.Main){
-                  Toast.makeText(context, "Search online is not finish yet", Toast.LENGTH_LONG).show()
-                }
-//                repository.requestSearchBreeds(id, page, limit, apiKey)
-//                    .debounce(200)
-//                    .catch {
-//                    }
-//                    .collect { breedItem ->
-//                        var itemBreed: BreedItem = breedItem
-//                        val referenceId = itemBreed.referenceId
-//                        repository.requestGetImage(referenceId, page, limit, apiKey)
-//                            .catch {
-//                            }
-//                            .collect {
-//                                val imageItem: Image = it
-//                                itemBreed.image.url = imageItem.url
-//                                val result: PagingData<BreedItem> = PagingData.empty()
-////                                result.
-//                                breedsSearchLiveData.value = result
-//                            }
-//                    }
+                repository.requestSearchBreeds(id, page, limit, apiKey)
+                    .debounce(200)
+                    .catch {
+                    }
+                    .collect { breedItem ->
+                        var itemBreed: BreedItem = breedItem
+                        val referenceId = itemBreed.referenceId
+                        Pager(
+                            config = PagingConfig(
+                                pageSize = 10,
+                                enablePlaceholders = true
+                            ),
+                            pagingSourceFactory = {
+                                RemoteSearchDataSourceImpl(
+                                    itemBreed,
+                                    referenceId,
+                                    page,
+                                    limit,
+                                    apiKey,
+                                    apiService
+                                )
+                            }
+                        ).flow.collect {
+                            breedsSearchLiveData.value = it
+                        }
+                    }
             } else {
                 Pager(
                     config = PagingConfig(
@@ -88,7 +97,6 @@ constructor(
                 ).flow.collect {
                     breedsSearchLiveData.value = it
                 }
-
             }
         }
     }
@@ -105,12 +113,20 @@ constructor(
                 itemBreed.image.url = imagePath.toString()
                 repository.saveBreedToLocal(itemBreed)
                 viewModelScope.launch(Dispatchers.Main) {
-                    Toast.makeText(context, context.getString(R.string.download_success), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.download_success),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
-        } else{
+        } else {
             viewModelScope.launch(Dispatchers.Main) {
-                Toast.makeText(context, context.getString(R.string.connection_on), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.connection_on),
+                    Toast.LENGTH_LONG
+                ).show()
             }
 
         }
