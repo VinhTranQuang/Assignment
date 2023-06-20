@@ -75,6 +75,7 @@ class BreedListActivity : BaseActivity(), RecyclerItemListener {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                // type id like awir, abys
                 if (newText?.length == 4) {
                     searchJob?.cancel()
                     searchJob = lifecycleScope.launch {
